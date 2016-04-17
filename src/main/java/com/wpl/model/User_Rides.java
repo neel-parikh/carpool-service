@@ -36,7 +36,7 @@ public class User_Rides
 		this.riderNo = riderNo;
 	}
 
-	public User getUser() {
+	public User getUserId() {
 		return user;
 	}
 

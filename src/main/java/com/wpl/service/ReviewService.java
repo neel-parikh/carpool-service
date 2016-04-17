@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wpl.dao.impl.ReviewDAOImpl;
 import com.wpl.model.Review;
+import com.wpl.model.Ride;
+import com.wpl.model.User;
 
 @RestController
 @RequestMapping("/review")
@@ -17,10 +19,16 @@ public class ReviewService
 	private ReviewDAOImpl reviewDAO;
 	
 	@RequestMapping(value="/createReview",method=RequestMethod.GET)
-	public void createReview(@RequestParam("stars") int stars,
+	public void createReview(@RequestParam("rideId") String rideId,
+			@RequestParam("stars") int stars,
 			@RequestParam("comments") String comments)
 	{
+		Ride ride = new Ride();
+		ride.setRideId(rideId);
+		User user = new User();
+		user.setUserId("neel1");
 		Review review = new Review();
+		review.setRide(ride);
 		review.setStars(stars);
 		review.setComments(comments);
 		reviewDAO.save(review);

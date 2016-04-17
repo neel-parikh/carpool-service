@@ -3,10 +3,14 @@ package com.wpl.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
 import com.wpl.DBConnection;
+import com.wpl.HibernateConfig;
 import com.wpl.dao.ReviewDAO;
 import com.wpl.mapper.ReviewMapper;
 import com.wpl.model.Review;
@@ -14,17 +18,22 @@ import com.wpl.model.Review;
 /*public class ReviewDAOImpl extends HibernateDaoSupport implements ReviewDAO {*/
 
 @Service
+@Transactional
 public class ReviewDAOImpl implements ReviewDAO {
 
 	@Autowired
 	private DBConnection dbase;
 	
+	@Autowired
+	private HibernateConfig template;
+	
 	@Override
 	public void save(Review review) {
-		String reviewId = "RV"+countReviews();
-		String SQL = "insert into REVIEW values()";
+		String reviewId = "RW"+countReviews();
+		//String SQL = "insert into REVIEW values()";
 		review.setReviewId(reviewId);
-		dbase.getJdbcTemplateObject().update(SQL,review);
+		//dbase.getJdbcTemplateObject().update(SQL,review);
+		template.getHibernateTemplate().save(review);
 	}
 
 	@Override

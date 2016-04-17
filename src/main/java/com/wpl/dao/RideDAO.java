@@ -11,4 +11,6 @@ public interface RideDAO {
 	void update(Ride ride);
 	void delete(Ride ride);
 	Ride findByRideId(String rideId);
+	void saveRider(String rideId,String userId);
+	int countRides();
 }

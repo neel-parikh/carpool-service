@@ -3,6 +3,8 @@ package com.wpl.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import com.wpl.dao.UserDAO;
 import com.wpl.model.User;
 
 @Service
+@Transactional
 public class UserDAOImpl implements UserDAO {
 
 	@Autowired

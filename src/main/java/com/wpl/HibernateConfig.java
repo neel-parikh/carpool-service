@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,7 +53,10 @@ public class HibernateConfig {
 	  public HibernateTemplate getHibernateTemplate()
 	  {
 		  try {
-			return new HibernateTemplate(sessionFactory().getObject());
+			  SessionFactory factory = sessionFactory().getObject();
+			  HibernateTemplate template = new HibernateTemplate(factory);
+			  template.setCheckWriteOperations(false);
+			return template;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
