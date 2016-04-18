@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wpl.dao.impl.ReviewDAOImpl;
+import com.wpl.dao.ReviewDAO;
 import com.wpl.model.Review;
 import com.wpl.model.Ride;
 import com.wpl.model.User;
@@ -16,7 +16,7 @@ import com.wpl.model.User;
 public class ReviewService 
 {
 	@Autowired
-	private ReviewDAOImpl reviewDAO;
+	private ReviewDAO reviewDAO;
 	
 	@RequestMapping(value="/createReview",method=RequestMethod.GET)
 	public void createReview(@RequestParam("rideId") String rideId,

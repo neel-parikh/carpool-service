@@ -12,4 +12,6 @@ public interface UserDAO {
 	void delete(User user);
 	User findByUserId(String userId);
 	int checkUserInDB(String userId,String password);
+	int getIncorrectAttempts(String userId);
+	void updateIncorrectAttempts(String userId);
 }

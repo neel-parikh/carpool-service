@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 
 import com.wpl.DBConnection;
@@ -50,7 +51,10 @@ public class UserDAOImpl implements UserDAO {
 		params.add(userId);
 		//List<User> users = dbase.getJdbcTemplateObject().query(SQL,params.toArray(),new UserMapper());
 		List users = template.getHibernateTemplate().findByNamedParam("from User u where u.userId=:id","id",userId);
-		return (User) users.get(0);
+		if(users.size()>0)
+			return (User) users.get(0);
+		else
+			return null;
 	}
 	
 	@Cacheable
@@ -68,5 +72,18 @@ public class UserDAOImpl implements UserDAO {
 		return users.size();
 		
 		//return result;
+	}
+
+	@Override
+	public int getIncorrectAttempts(String userId) {
+		return DataAccessUtils.intResult(template.getHibernateTemplate().findByNamedParam
+				("select loginAttempts from User where userId=:userId","userId",userId));
+	}
+
+	@Override
+	public void updateIncorrectAttempts(String userId) {
+		User user = findByUserId(userId);
+		user.setLoginAttempts(getIncorrectAttempts(userId)+1);
+		update(user);
 	}
 }

@@ -13,15 +13,9 @@ public class User {
 	private String lastName;
 	private String lastLogin;
 	private String emailId;
-	private String birthDate;
+	private String phoneNo;
 	private int loginAttempts;
 	
-	public int getNoOfFailedAttempts() {
-		return loginAttempts;
-	}
-	public void setNoOfFailedAttempts(int noOfFailedAttempts) {
-		this.loginAttempts = noOfFailedAttempts;
-	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -49,11 +43,18 @@ public class User {
 	public String getUserId() {
 		return userId;
 	}
-	public String getBirthDate() {
-		return birthDate;
+	
+	public String getPhoneNo() {
+		return phoneNo;
 	}
-	public void setBirthDate(String birthDate) {
-		this.birthDate = birthDate;
+	public void setPhoneNo(String phoneNo) {
+		this.phoneNo = phoneNo;
+	}
+	public int getLoginAttempts() {
+		return loginAttempts;
+	}
+	public void setLoginAttempts(int loginAttempts) {
+		this.loginAttempts = loginAttempts;
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;

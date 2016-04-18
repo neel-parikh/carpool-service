@@ -23,12 +23,25 @@ public class UserService
 	@RequestMapping(value="/checkUser",method=RequestMethod.POST)
 	public boolean checkUser(@RequestBody User user)
 	{
-		int result = userDAO.checkUserInDB(user.getUserId(), user.getPassword());
-		System.out.println("Service called");
-		if(result==0)
+		User userCheck = userDAO.findByUserId(user.getUserId());
+		if(userCheck!=null)
+		{
+			String lastLogin = new Date().toString();
+			user.setLastLogin(lastLogin);
+			int result = userDAO.checkUserInDB(user.getUserId(), user.getPassword());
+			System.out.println("Service called");
+			if(result==0)
+			{
+				userDAO.updateIncorrectAttempts(user.getUserId());
+				return false;
+			}
+			else 
+				return true;
+		}
+		else
+		{
 			return false;
-		else 
-			return true;
+		}
 	}
 	
 	@RequestMapping(value="/createUser")
@@ -37,11 +50,10 @@ public class UserService
 			@RequestParam("emailId") String emailId,
 			@RequestParam("firstName") String firstName,
 			@RequestParam("lastName") String lastName,
-			@RequestParam("birthDate") String bdate)
+			@RequestParam("phoneNo") String phoneNo)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
 		String lastLogin = sdf.format(new Date());
-		String birthDate = sdf.format(bdate);
 		
 		User user = new User();
 		user.setUserId(userId);
@@ -50,7 +62,7 @@ public class UserService
 		user.setLastLogin(lastLogin);
 		user.setLastName(lastName);
 		user.setEmailId(emailId);
-		user.setBirthDate(birthDate);
+		user.setPhoneNo(phoneNo);
 		userDAO.save(user);
 	}
 	
