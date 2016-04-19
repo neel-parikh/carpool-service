@@ -35,8 +35,19 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public void update(User user) {
 		// TODO Auto-generated method stub
+/*		System.out.println(user.getUserId());
 		user = findByUserId(user.getUserId());
-		template.getHibernateTemplate().update(user);
+		System.out.println(user.getUserId() + user.getEmailId() + user.getPassword());
+		template.getHibernateTemplate().update(user);*/
+		String SQL = "update user set firstName=?,lastName=?,emailId=?,phoneNo=? where userId=?";
+		List params = new ArrayList<>();
+		params.add(user.getFirstName());
+		params.add(user.getLastName());
+		params.add(user.getEmailId());
+		params.add(user.getPhoneNo());
+		params.add(user.getUserId());
+		
+		dbase.getJdbcTemplateObject().update(SQL, params.toArray());
 	}
 
 	@Override
@@ -85,6 +96,6 @@ public class UserDAOImpl implements UserDAO {
 	public void updateIncorrectAttempts(String userId) {
 		User user = findByUserId(userId);
 		user.setLoginAttempts(getIncorrectAttempts(userId)+1);
-		update(user);
+		template.getHibernateTemplate().update(user);
 	}
 }
