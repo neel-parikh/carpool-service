@@ -73,21 +73,12 @@ public class UserService
 		return user;
 	}
 	
-	@RequestMapping(value="/updateUserProfile",method=RequestMethod.GET,consumes="application/json")
-	public void updateProfile(@RequestParam("userId") String userId,
-			@RequestParam("firstName") String firstName,
-			@RequestParam("lastName") String lastName,
-			@RequestParam("emailId") String emailId,
-			@RequestParam("phoneNo") String phoneNo)
+	@RequestMapping(value="/updateUserProfile",method=RequestMethod.POST)
+	public boolean updateProfile(@RequestBody User user)
 	{
-		User user = new User();
-		user.setUserId(userId);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setEmailId(emailId);
-		user.setPhoneNo(phoneNo);
 		userDAO.update(user);
 		System.out.println("Called service");
+		return true;
 	}
 	
 }

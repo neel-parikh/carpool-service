@@ -35,6 +35,7 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public void update(User user) {
 		// TODO Auto-generated method stub
+		user = findByUserId(user.getUserId());
 		template.getHibernateTemplate().update(user);
 	}
 
