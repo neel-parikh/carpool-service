@@ -2,15 +2,16 @@ package com.wpl;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 
 //@EnableOAuth2Sso
 @SpringBootApplication
+//@EnableCaching
 public class ApplicationService 
 {
 	public static void main(String[] args) 
 	{
-		
 		ApplicationContext ctx = SpringApplication.run(ApplicationService.class, args);
 
 		System.out.println("Spring Boot Application Started at : port 8180");

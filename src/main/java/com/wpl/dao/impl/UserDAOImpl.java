@@ -6,9 +6,11 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.wpl.DBConnection;
 import com.wpl.HibernateConfig;
@@ -16,7 +18,7 @@ import com.wpl.dao.UserDAO;
 import com.wpl.model.User;
 
 @Service
-@Transactional
+@EnableTransactionManagement
 public class UserDAOImpl implements UserDAO {
 
 	@Autowired
@@ -33,21 +35,24 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
+	@Transactional
 	public void update(User user) {
 		// TODO Auto-generated method stub
-/*		System.out.println(user.getUserId());
-		user = findByUserId(user.getUserId());
-		System.out.println(user.getUserId() + user.getEmailId() + user.getPassword());
-		template.getHibernateTemplate().update(user);*/
-		String SQL = "update user set firstName=?,lastName=?,emailId=?,phoneNo=? where userId=?";
+		template.getHibernateTemplate().update(user);
+	/*	String SQL = "update user set userId=?,password=?,lastLogin=?,loginAttempts=?,"
+				+ "firstName=?,lastName=?,emailId=?,phoneNo=? where userId=?";
 		List params = new ArrayList<>();
+		params.add(user.getUserId());
+		params.add(user.getPassword());
+		params.add(user.getLastLogin());
+		params.add(user.getLoginAttempts());
 		params.add(user.getFirstName());
 		params.add(user.getLastName());
 		params.add(user.getEmailId());
 		params.add(user.getPhoneNo());
 		params.add(user.getUserId());
 		
-		dbase.getJdbcTemplateObject().update(SQL, params.toArray());
+		dbase.getJdbcTemplateObject().update(SQL, params.toArray());*/
 	}
 
 	@Override
@@ -57,6 +62,7 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
+	@Cacheable
 	public User findByUserId(String userId) {
 		//String SQL = "select * from carpool.USER where user_id = ?";
 		List params = new ArrayList();
