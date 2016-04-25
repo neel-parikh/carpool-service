@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wpl.dao.ReviewDAO;
+import com.wpl.dao.RideDAO;
+import com.wpl.dao.UserDAO;
 import com.wpl.model.Review;
 import com.wpl.model.Ride;
 import com.wpl.model.User;
@@ -18,20 +20,35 @@ public class ReviewService
 	@Autowired
 	private ReviewDAO reviewDAO;
 	
-	@RequestMapping(value="/createReview",method=RequestMethod.GET)
-	public void createReview(@RequestParam("rideId") String rideId,
-			@RequestParam("stars") int stars,
-			@RequestParam("comments") String comments)
+	@Autowired
+	private RideDAO rideDAO;
+	
+	@Autowired
+	private UserDAO userDAO;
+	
+	@RequestMapping(value="/addReview",method=RequestMethod.GET)
+	public void addReview(@RequestParam("userId") String userId,@RequestParam("rideId") String rideId,
+			@RequestParam("stars") String stars)
 	{
-		Ride ride = new Ride();
-		ride.setRideId(rideId);
-		User user = new User();
-		user.setUserId("neel1");
+		Ride ride = rideDAO.findByRideId(rideId);
+		User user = userDAO.findByUserId(userId);
 		Review review = new Review();
+		review.setUser(user);
+		review.setStars(Integer.parseInt(stars));
 		review.setRide(ride);
-		review.setStars(stars);
-		review.setComments(comments);
+		//review.setComments(comments);
+		
+		Review rv = reviewDAO.findByExistingUserAndRide(userId, rideId);
+		if(rv!=null)
+		{
+			rv.setUser(user);
+			rv.setRide(ride);
+			rv.setStars(Integer.parseInt(stars));
+			reviewDAO.update(rv);
+		}
+		else{
 		reviewDAO.save(review);
+		}
 	}
 	
 	@RequestMapping(value="/getReview",method=RequestMethod.GET)

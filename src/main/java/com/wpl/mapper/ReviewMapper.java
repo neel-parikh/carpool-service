@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.wpl.model.Review;
+import com.wpl.model.User;
 
 @Component
 public class ReviewMapper implements RowMapper<Review>
@@ -17,8 +18,9 @@ public class ReviewMapper implements RowMapper<Review>
 	public Review mapRow(ResultSet rs, int arg1) throws SQLException 
 	{
 		Review review = new Review();
-		review.setReviewId(rs.getString("review_id"));
-		review.setComments(rs.getString("comments"));
+		//User user = new User();
+		//review.setUser(user);
+		review.setReviewId(rs.getString("reviewId"));
 		review.setStars(rs.getInt("stars"));
 		return review;
 	}

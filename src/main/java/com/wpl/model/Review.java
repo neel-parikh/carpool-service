@@ -11,14 +11,15 @@ public class Review
 	@Id
 	private String reviewId;
 	
-	@JoinColumn(name="userId",referencedColumnName = "userId",insertable=false, updatable=false)
+	@JoinColumn(name="userId")
 	@ManyToOne(cascade=CascadeType.ALL)
 	private User user;
 	
-	@JoinColumn(name="rideId",referencedColumnName = "rideId",insertable=false, updatable=false)
+	@JoinColumn(name="rideId")
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Ride ride;
 	
+	private int stars;
 	
 	public User getUser() {
 		return user;
@@ -32,8 +33,6 @@ public class Review
 	public void setRide(Ride ride) {
 		this.ride = ride;
 	}
-	private String comments;
-	private int stars;
 	public String getReviewId() {
 		return reviewId;
 	}
@@ -41,12 +40,6 @@ public class Review
 		this.reviewId = reviewId;
 	}
 	
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
 	public int getStars() {
 		return stars;
 	}

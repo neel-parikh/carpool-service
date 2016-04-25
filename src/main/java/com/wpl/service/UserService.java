@@ -3,8 +3,9 @@ package com.wpl.service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +23,7 @@ public class UserService
 	private UserDAO userDAO;
 	
 	@RequestMapping(value="/checkUser",method=RequestMethod.POST)
-	public boolean checkUser(@RequestBody User user)
+	public boolean checkUser(@RequestBody User user,HttpServletRequest req)
 	{
 		User userCheck = userDAO.findByUserId(user.getUserId());
 		if(userCheck!=null)
@@ -51,32 +52,20 @@ public class UserService
 		}
 	}
 	
-	@RequestMapping(value="/createUser")
-	public void createUser(@RequestParam("userId") String userId,
-			@RequestParam("password") String password,
-			@RequestParam("emailId") String emailId,
-			@RequestParam("firstName") String firstName,
-			@RequestParam("lastName") String lastName,
-			@RequestParam("phoneNo") String phoneNo)
+	@RequestMapping(value="/createUser",method=RequestMethod.POST)
+	public Boolean createUser(@RequestBody User user)
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-		String lastLogin = sdf.format(new Date());
-		
-		User user = new User();
-		user.setUserId(userId);
-		user.setPassword(password);
-		user.setFirstName(firstName);
-		user.setLastLogin(lastLogin);
-		user.setLastName(lastName);
-		user.setEmailId(emailId);
-		user.setPhoneNo(phoneNo);
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+		//String lastLogin = sdf.format(new Date());
+		System.out.println("web server2");
 		userDAO.save(user);
+		return true;
 	}
 	
 	@RequestMapping(value="/getUser",method=RequestMethod.GET)
 	public User getUser(@RequestParam("userId") String userId) {
 		User user = userDAO.findByUserId(userId);
-		user.setPassword(null);
+		//user.setPassword(null);
 		return user;
 	}
 	
@@ -94,5 +83,4 @@ public class UserService
 		System.out.println("Called service");
 		return true;
 	}
-	
 }

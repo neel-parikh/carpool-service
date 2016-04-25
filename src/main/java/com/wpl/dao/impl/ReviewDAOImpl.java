@@ -6,7 +6,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Service;
 
 import com.wpl.DBConnection;
@@ -38,7 +37,7 @@ public class ReviewDAOImpl implements ReviewDAO {
 
 	@Override
 	public void update(Review review) {
-		// TODO Auto-generated method stub
+		template.getHibernateTemplate().update(review);
 		
 	}
 
@@ -46,6 +45,15 @@ public class ReviewDAOImpl implements ReviewDAO {
 	public void delete(Review review) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public Review findByExistingUserAndRide(String userId,String rideId) {
+		String SQL = "select * from REVIEW where userId = '"+ userId +"' and rideId='"+ rideId +"'";
+		List<Review> reviews = dbase.getJdbcTemplateObject().query(SQL,new ReviewMapper());
+		if(reviews.size()>0)
+			return reviews.get(0);
+		else
+			return null;
 	}
 
 	@Override

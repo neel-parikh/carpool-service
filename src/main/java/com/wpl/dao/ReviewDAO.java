@@ -11,4 +11,5 @@ public interface ReviewDAO {
 	void update(Review review);
 	void delete(Review review);
 	Review findByReviewId(String reviewId);
+	Review findByExistingUserAndRide(String userId,String rideId);
 }
