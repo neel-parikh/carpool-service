@@ -1,5 +1,7 @@
 package com.wpl.dao.impl;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,6 @@ import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -17,11 +18,14 @@ import com.wpl.HibernateConfig;
 import com.wpl.dao.UserDAO;
 import com.wpl.model.User;
 
+import net.spy.memcached.MemcachedClient;
+
 @Service
 @EnableTransactionManagement
 public class UserDAOImpl implements UserDAO {
 
 	private static Logger LOGGER = Logger.getLogger(UserDAOImpl.class);
+	
 	
 	@Autowired
 	private DBConnection dbase;
@@ -77,20 +81,16 @@ public class UserDAOImpl implements UserDAO {
 	//@Cacheable("mycache")
 	public int checkUserInDB(String userId,String password)
 	{
-		LOGGER.info("CACHE MISS");
-		LOGGER.info("CHECKING USER IN DATABASE");
-		/*String SQL;
-		SQL = "select count(*) from carpool.user where user_id=? and password=?";
-		*/List params = new ArrayList();
+		List users = null;
+		System.out.println("CACHE MISS");
+		List params = new ArrayList();
 		params.add(userId);
 		params.add(password);
 		String str[] = {"userId","password"};
 		//int result = dbase.getJdbcTemplateObject().queryForObject(SQL, params.toArray(),Integer.class);
-		List users = template.getHibernateTemplate().findByNamedParam("from User where userId=:userId and password=:password",
+		users = template.getHibernateTemplate().findByNamedParam("from User where userId=:userId and password=:password",
 				str,params.toArray());
-		LOGGER.info("Checking User in DB Done");
 		return users.size();
-		//return result;
 	}
 	
 	public int getIncorrectAttempts(String userId) {

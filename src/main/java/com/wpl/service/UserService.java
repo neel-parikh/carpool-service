@@ -1,5 +1,7 @@
 package com.wpl.service;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wpl.dao.UserDAO;
 import com.wpl.model.User;
+
+import net.spy.memcached.MemcachedClient;
 
 @RestController
 @RequestMapping("/user")
@@ -22,35 +27,50 @@ public class UserService
 	@Autowired
 	private UserDAO userDAO;
 	
+	MemcachedClient client;
+	
 	@RequestMapping(value="/checkUser",method=RequestMethod.POST)
 	public boolean checkUser(@RequestBody User user,HttpServletRequest req)
 	{
-		User userCheck = userDAO.findByUserId(user.getUserId());
-		if(userCheck!=null)
-		{
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String lastLogin = sdf.format(new Date());
-			userCheck.setLastLogin(lastLogin);
-			int result = userDAO.checkUserInDB(user.getUserId(), user.getPassword());
-			System.out.println("Service called");
-			if(result==0)
-			{
-				//userDAO.updateIncorrectAttempts(user.getUserId());
-				userCheck.setLoginAttempts(userCheck.getLoginAttempts()+1);
-				userDAO.update(userCheck);
-				return false;
-			}
-			else { 
-				System.out.println(userCheck.getUserId() + " >>> " + userCheck.getLastLogin());
-				userDAO.update(userCheck);
+		try{
+			client = new MemcachedClient(new InetSocketAddress("127.0.0.1", 11211));
+			if(client.get("userId") != null && client.get("password") != null && client.get("userId").equals(user.getUserId()) && client.get("password").equals(user.getPassword())) {
+				System.out.println("CACHE HIT");
 				return true;
 			}
+			else{
+				System.out.println("CACHE MISS");
+				User userCheck = userDAO.findByUserId(user.getUserId());
+				if(userCheck!=null)
+				{
+					int result = userDAO.checkUserInDB(user.getUserId(), user.getPassword());
+					System.out.println("Service called");
+					if(result==0)
+					{
+						//userDAO.updateIncorrectAttempts(user.getUserId());
+						userCheck.setLoginAttempts(userCheck.getLoginAttempts()+1);
+						userDAO.update(userCheck);
+						return false;
+					}
+					else { 
+						client.set("userId", 3600, user.getUserId());
+						client.set("password", 3600, user.getPassword());
+						return true;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
+	
+	
 	
 	@RequestMapping(value="/createUser",method=RequestMethod.POST)
 	public Boolean createUser(@RequestBody User user)
@@ -82,5 +102,13 @@ public class UserService
 		userDAO.update(puser);
 		System.out.println("Called service");
 		return true;
+	}
+	
+	@RequestMapping(value="/setLastLoginTime")
+	public void setLastLoginTime(@RequestParam("userId") String userId,@RequestParam("lastLogin") String lastLogin) {
+		User user = this.getUser(userId);
+		user.setLastLogin(lastLogin);
+		System.out.println(user.getEmailId() + "    " + user.getUserId() + "   " + user.getFirstName());
+		userDAO.update(user);
 	}
 }
